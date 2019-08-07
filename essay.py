@@ -10,7 +10,11 @@ import re
 import nltk
 #nltk.download('stopwords')
 from nltk.corpus import stopwords
-essay = pd.read_csv('training_set_rel3.tsv', sep='\t', header=0,encoding="latin-1")  
+
+essay = pd.read_csv('training_set_rel3.tsv', sep='\t', header=0,encoding="latin-1")
+
+essay=essay.dropna(axis=1);  
+
 essay.head()
 essay.info()
 
