@@ -13,31 +13,107 @@ from nltk.corpus import stopwords
 
 essay = pd.read_csv('training_set_rel3.tsv', sep='\t', header=0,encoding="latin-1")
 
-essay=essay.dropna(axis=1);  
-
+essay=essay[['essay_id','essay_set','essay','domain1_score']]
+essay=essay.dropna(axis=0)
 essay.head()
 essay.info()
 
 from nltk.stem.porter import PorterStemmer
 corpus  = []
 
-for i in range(0, 3):
+for i in range(0, 1):
     review = re.sub('[^a-zA-Z]', ' ', essay['essay'][i])
     review = review.lower()
     review = review.split()
     review = [word for word in review if not word in set(stopwords.words('english'))]
-    
-    #lem = WordNetLemmatizer() #Another way of finding root word
-    ps = PorterStemmer()
-    review = [ps.stem(word) for word in review]
-    #review = [lem.lemmatize(word) for word in review if not word in set(stopwords.words('english'))]
-    review = ' '.join(review)
+    #ps = PorterStemmer()
+    #review = [ps.stem(word) for word in review]
     corpus.append(review)
-
-# Creating the Bag of Words model
-# Also known as the vector space model
-# Text to Features (Feature Engineering on text data)
     
+my_dict={}
+for i in corpus[0]:
+    if i not in my_dict:
+        my_dict[i]=1
+    else:
+        my_dict[i]+=1
+print(len(my_dict))   
+
+#tokens = nltk.word_tokenize(essay['essay'][0])
+     
+###########features extract##############
+
+
+
+
+features=pd.DataFrame()
+
+def char_count(essay):
+    p=re.compile('\w')
+    char_count=p.findall(essay)
+    return len(char_count)
+
+def word_count(essay):
+    p=re.compile('\w+')
+    char_count=p.findall(essay)
+    return len(char_count)
+    #tokens = nltk.word_tokenize(char_count)
+    #print(tokens)
+    
+def extract_features(essay):
+    features['char_count']=essay['essay'].apply(char_count)
+    features['word_count']=essay['essay'].apply(word_count)
+    
+    return features
+
+# extracting features from essay set 1
+
+features_set = extract_features(essay[essay['essay_set'] == 1])
+
+print(features_set)
+
+
+
+
+
+
+
+
+
+
+
+
+
+import re 
+
+# \d is equivalent to [0-9]. 
+p = re.compile('\w+') 
+print(len(p.findall("I went to him at 11 A.M. on 4th July 1886")) )
+
+
+
+# \d+ will match a group on [0-9], group of one or greater size 
+p = re.compile('\d+') 
+print(p.findall("5I went to him at 11 A.M. on 4th July 1886")) 
+
+
+
+p = re.sub('\d') 
+print(p.findall("5I went to him at 11 A.M. on 4th July 1886")) 
+
+
+re.sub('\s','','siuta3 df 3#22 ds2')
+
+
+clean_essay = re.sub(r'\W', ' ', essay)
+
+
+
+
+
+
+
+
+
 from sklearn.feature_extraction.text import CountVectorizer
 
   #bOW
